@@ -23,7 +23,7 @@ const (
 var (
 	oauthRestClient = rest.RequestBuilder{
 		BaseURL: "http://localhost:8080",
-		Timeout: 200 * time.Milliseconds,
+		Timeout: 200 * time.Millisecond,
 	}
 )
 
@@ -50,18 +50,18 @@ func GetCallerId(request *http.Request) int64 {
 	if request == nil {
 		return 0
 	}
-	callerId, err := strconv.ParseInt(request.Header.Get(headerXCallerId))
+	callerId, err := strconv.ParseInt(request.Header.Get(headerXCallerId), 10, 64)
 	if err != nil {
 		return 0
 	}
 	return callerId
 }
 
-func GetClientId() int64 {
+func GetClientId(request *http.Request) int64 {
 	if request == nil {
 		return 0
 	}
-	clientId, err := strconv.ParseInt(request.Header.Get(headerXClientId))
+	clientId, err := strconv.ParseInt(request.Header.Get(headerXClientId), 10, 64)
 	if err != nil {
 		return 0
 	}
@@ -76,7 +76,7 @@ func AuthenticateRequest(request *http.Request) *errors.RestErr {
 	cleanRequest(request)
 
 	accessTokenId := strings.TrimSpace(request.URL.Query().Get(paramAccessToken))
-	if accessToken == "" {
+	if accessTokenId == "" {
 		return nil
 	}
 	at, err := getAccessToken(accessTokenId)
